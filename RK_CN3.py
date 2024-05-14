@@ -6,7 +6,6 @@ import os
 from scipy.stats import linregress
 
 save_dir = '/users/chessbunny/documents/NM2_HW5/figures'
-plt.style.use('plot_style.txt')
 
 # -----------------------------------------------------------------
 def exact_solution(x, t, mu):
