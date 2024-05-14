@@ -5,7 +5,6 @@ from scipy.linalg import solve_banded
 import os
 
 
-plt.style.use('plot_style.txt')
 save_dir = '/users/chessbunny/documents/NM2_HW5/figures'
 # ------------------------------------------------------------------------
 # CFL Stability
@@ -82,6 +81,7 @@ dx_list, dt_list = plot_for_different_dx(length_L, mesh_sizes, diff_coef_mu, sou
 
 print(dx_list)
 print(dt_list)
+
 # ------------------------------------------------------------------------
 # Plotting function for |m(θ)| 
 # Constants
@@ -110,7 +110,7 @@ def plot_m_theta():
             current_dx = dx[j]
             current_dt = dt[j]
             L = 1  
-            n = int(L / current_dx) - 1  # Calculating the number of internal grid points
+            n = int(L / current_dx) - 1  
 
             m_theta = -1j * current_dt * (a / current_dx) * np.sin(theta) + current_dt * (current_mu / current_dx**2) * (2 * np.cos(theta) - 2)
             magnitude_m_theta = np.abs(m_theta)
@@ -126,7 +126,38 @@ def plot_m_theta():
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     # plt.savefig(os.path.join(save_dir, 'Q2_2Dm_theta_1.png'))
-    plt.show()
+    # plt.show()
 
-plot_m_theta()
+
+# ------------------------------------------------------------------------
+# Parameters
+mu = 1.0          # Diffusion coefficient
+dx = 0.1          # Spatial step size
+theta = np.linspace(0, 2 * np.pi, 400)  # Wave number array
+S = 0             # Source term, assuming zero for simplicity
+
+# Compute the amplification factor g
+g_numer = 1 +  1j * np.sin(theta) + S
+g_denom = 1 - mu * (2 / dx) * (np.cos(theta) - 1)
+g = g_numer / g_denom
+
+# Compute the magnitude of g
+g_magnitude = np.abs(g)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(theta, g_magnitude, label='|m(θ)|', color='blue')
+plt.axhline(1, color='red', linestyle='--', label='Stability Threshold |m(θ)|=1')
+plt.title('Amplification Factor Magnitude vs. Theta')
+plt.xlabel('Theta (rad)')
+plt.ylabel('|m(θ)|')
+plt.legend()
+plt.grid(True)
+plt.savefig(os.path.join(save_dir, 'Q4_stab.png'))
+plt.show()
+
+# Check stability
+if np.all(g_magnitude <= 1):
+    print("The scheme is stable for the given parameters.")
+else:
 
